@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff; /* Overall white background */
+    }
+    header {
+      padding: 10px 20px;
+      color: black;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .hero {
+      position: relative;
+      background: url('https://images.ctfassets.net/o78em1y1w4i4/LHN0F94cNFCx1drEcfcsY/984e632abf38018f2a6ab22c4b61fdc6/teaser-book-with-heart-pages.jpg?fm=webp&w=1160&q=75') no-repeat center center/cover;
+      height: 500px; /* Adjust height as needed */
+      color: #ffffff;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero h1 {
+      font-size: 48px;
+      margin: 0;
+      color: #ff6600; /* Solid orange text */
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Add depth to text */
+    }
+    .hero p {
+      font-size: 18px;
+      margin: 10px 0 20px;
+      color: white; /* White text for the subheading */
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px; /* Extend part of the image below the hero section */
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: inherit; /* Matches the hero background */
+      background-position: center bottom;
+      transform: scaleY(1.5); /* Adds a stretched effect */
+      z-index: -1; /* Keeps it behind content */
+    }
+    .game-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      justify-content: center;
+      max-width: 80%;
+      margin: 40px auto;
+    }
+    .game-box {
+      width: 150px;
+      height: 150px;
+      background-color: #ff6600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+    .game-box:hover {
+      transform: scale(1.1);
+      background-color: #ff4400;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: none; /* Initially hidden */
+      z-index: 1000;
+    }
+    #exitButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: white;
+      color: #ff6600;
+      border: 2px solid #ff6600;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001; /* Ensure it appears above the iframe */
+      display: none; /* Initially hidden */
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #exitButton:hover {
+      background-color: #ff6600;
+      color: white;
+    }
+    footer {
+      color: black;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header></header>
+  <section class="hero">
+    <h1>Discover the World of Games</h1>
+    <p>Online learning and fun, anytime, anywhere!</p>
+  </section>
+  <div class="game-container" id="games">
+    <div class="game-box" onclick="loadGame('https://localhost/website/Snakegame/')">Snake Game</div>
+    <div class="game-box" onclick="loadGame('https://localhost/website/dist')">Tower Block</div>
+    <div class="game-box" onclick="loadGame('https://localhost/flipcard-memory-game/dist')">Card Memory</div>
+    <div class="game-box" onclick="loadGame('https://localhost/daily-pen-010-a-generic-infinite-runner-game')">Infinite runner</div>
+    <div class="game-box" onclick="loadGame('https://localhost/js-planet-defense-game')">Planet Defense</div>
+    <div class="game-box" onclick="loadGame('https://localhost/Flappy-Bird-Game-main')">Flappy Bird</div>
+
+  </div>
+  <iframe id="gameFrame"></iframe>
+  <button id="exitButton" onclick="exitGame()">Exit</button>
+  <footer></footer>
+
+  <script>
+    function loadGame(url) {
+      const iframe = document.getElementById('gameFrame');
+      const exitButton = document.getElementById('exitButton');
+      
+      iframe.style.display = 'block'; // Show the iframe
+      iframe.src = url; // Set the iframe source to the game URL
+      exitButton.style.display = 'block'; // Show the exit button
+      
+      // Request fullscreen
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.mozRequestFullScreen) { // Firefox
+        iframe.mozRequestFullScreen();
+      } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) { // IE/Edge
+        iframe.msRequestFullscreen();
+      }
+
+      // Ensure button is visible even in fullscreen mode
+      document.body.appendChild(exitButton);
+      exitButton.style.zIndex = "1001";
+    }
+
+    function exitGame() {
+      const iframe = document.getElementById('gameFrame');
+      const exitButton = document.getElementById('exitButton');
+
+      iframe.style.display = 'none'; // Hide the iframe
+      iframe.src = ''; // Clear the iframe source
+      exitButton.style.display = 'none'; // Hide the exit button
+
+      // Exit fullscreen gracefully
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch((err) => console.log("Error exiting fullscreen: ", err));
+      } else if (document.mozFullScreenElement) { // Firefox
+        document.mozCancelFullScreen();
+      } else if (document.webkitFullscreenElement) { // Chrome, Safari, Opera
+        document.webkitExitFullscreen();
+      } else if (document.msFullscreenElement) { // IE/Edge
+        document.msExitFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>
